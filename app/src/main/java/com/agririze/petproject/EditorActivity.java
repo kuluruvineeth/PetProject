@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -13,8 +15,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.agririze.petproject.data.PetContract;
+import com.agririze.petproject.data.PetDbHelper;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -67,6 +71,32 @@ public class EditorActivity extends AppCompatActivity {
         });
     }
 
+    private void insertPet(){
+        String nameString = mNameEditText.getText().toString().trim();
+        String breedString = mBreedEditText.getText().toString().trim();
+        String weightString = mWeightEditText.getText().toString().trim();
+
+        int weight = Integer.parseInt(weightString);
+
+        PetDbHelper mDbHelper = new PetDbHelper(this);
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PetContract.PetEntry.COLUMN_PET_NAME,nameString);
+        values.put(PetContract.PetEntry.COLUMN_PET_BREED,breedString);
+        values.put(PetContract.PetEntry.COLUMN_PET_GENDER,mGender);
+        values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT,weight);
+
+        long newRowId = db.insert(PetContract.PetEntry.TABLE_NAME,null,values);
+
+        if(newRowId == -1){
+            Toast.makeText(this,"Error with saving pet",Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"Pet saved with row id: " + newRowId,Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_editor,menu);
@@ -77,6 +107,8 @@ public class EditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_save:
+                insertPet();
+                finish();
                 return true;
             case R.id.action_delete:
                 return true;
