@@ -14,13 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.agririze.petproject.data.PetContract;
+
 public class EditorActivity extends AppCompatActivity {
 
     private EditText mNameEditText;
     private EditText mBreedEditText;
     private EditText mWeightEditText;
     private Spinner mGenderSpinner;
-    private int mGender=0;
+    private int mGender= PetContract.PetEntry.GENDER_UNKNOWN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +51,18 @@ public class EditorActivity extends AppCompatActivity {
                 String selection = (String) parent.getItemAtPosition(position);
                 if(!TextUtils.isEmpty(selection)){
                     if(selection.equals(getString(R.string.gender_male))){
-                        mGender = 1;
+                        mGender = PetContract.PetEntry.GENDER_MALE;
                     }else if(selection.equals(getString(R.string.gender_female))){
-                        mGender = 2;
+                        mGender = PetContract.PetEntry.GENDER_FEMALE;
                     }else{
-                        mGender = 0;
+                        mGender = PetContract.PetEntry.GENDER_UNKNOWN;
                     }
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mGender = 0;
+                mGender = PetContract.PetEntry.GENDER_UNKNOWN;
             }
         });
     }
