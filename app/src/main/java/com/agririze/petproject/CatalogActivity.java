@@ -4,11 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.agririze.petproject.data.PetContract;
+import com.agririze.petproject.data.PetDbHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CatalogActivity extends AppCompatActivity {
@@ -27,6 +32,21 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        displayDatabaseInfo();
+    }
+
+    private void displayDatabaseInfo(){
+        PetDbHelper mDbHelper = new PetDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + PetContract.PetEntry.TABLE_NAME,null);
+        try{
+            TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
+        }finally {
+            cursor.close();
+        }
     }
 
     @Override
