@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ public class PetProvider extends ContentProvider {
     private static final int PETS = 100;
 
     private static final int PET_ID = 101;
+
+    private static final String LOG_TAG = PetProvider.class.getSimpleName();
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -72,7 +75,25 @@ public class PetProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match){
+            case PETS:
+                return insertPet(uri,values);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
+    }
+
+    private Uri insertPet(Uri uri, ContentValues values){
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        long id = database.insert(PetContract.PetEntry.TABLE_NAME,null,values);
+
+        if(id==-1){
+            Log.e(LOG_TAG,"Fauled to insert row for " + uri);
+            return null;
+        }
+        return ContentUris.withAppendedId(uri,id);
     }
 
     @Override
