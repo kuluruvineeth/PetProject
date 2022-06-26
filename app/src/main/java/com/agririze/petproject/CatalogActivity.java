@@ -3,6 +3,7 @@ package com.agririze.petproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,6 +18,8 @@ import com.agririze.petproject.data.PetDbHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CatalogActivity extends AppCompatActivity {
+
+    private PetDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +36,11 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
+        mDbHelper = new PetDbHelper(this);
         displayDatabaseInfo();
     }
 
     private void displayDatabaseInfo(){
-        PetDbHelper mDbHelper = new PetDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + PetContract.PetEntry.TABLE_NAME,null);
@@ -47,6 +50,18 @@ public class CatalogActivity extends AppCompatActivity {
         }finally {
             cursor.close();
         }
+    }
+
+    private void insertPet(){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PetContract.PetEntry.COLUMN_PET_NAME,"Toto");
+        values.put(PetContract.PetEntry.COLUMN_PET_BREED,"Terrier");
+        values.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.GENDER_MALE);
+        values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT,7);
+
+        long newRowId = db.insert(PetContract.PetEntry.TABLE_NAME,null,values);
     }
 
     @Override
@@ -59,6 +74,8 @@ public class CatalogActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_insert_dummy_data:
+                insertPet();
+                displayDatabaseInfo();
                 return true;
             case R.id.action_delete_all_entries:
                 return true;
