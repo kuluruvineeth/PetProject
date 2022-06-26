@@ -46,7 +46,7 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void displayDatabaseInfo(){
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
 
         String[] projection = {
                 PetContract.PetEntry._ID,
@@ -55,11 +55,9 @@ public class CatalogActivity extends AppCompatActivity {
                 PetContract.PetEntry.COLUMN_PET_GENDER,
                 PetContract.PetEntry.COLUMN_PET_WEIGHT
         };
-        Cursor cursor = db.query(
-                PetContract.PetEntry.TABLE_NAME,
+        Cursor cursor = getContentResolver().query(
+                PetContract.PetEntry.CONTENT_URI,
                 projection,
-                null,
-                null,
                 null,
                 null,
                 null
