@@ -92,7 +92,7 @@ public class EditorActivity extends AppCompatActivity implements
         });
     }
 
-    private void insertPet(){
+    private void savePet(){
         String nameString = mNameEditText.getText().toString().trim();
         String breedString = mBreedEditText.getText().toString().trim();
         String weightString = mWeightEditText.getText().toString().trim();
@@ -106,13 +106,27 @@ public class EditorActivity extends AppCompatActivity implements
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER,mGender);
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT,weight);
 
-        Uri newUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI,values);
+        if(mCurrentPetUri==null){
+            Uri newUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI,values);
 
-        if(newUri == null){
-            Toast.makeText(this,getString(R.string.editor_insert_pet_failed),Toast.LENGTH_SHORT).show();
+            if(newUri == null){
+                Toast.makeText(this,getString(R.string.editor_insert_pet_failed),
+                        Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this,getString(R.string.editor_insert_pet_successful),Toast.LENGTH_SHORT).show();
+            }
         }else{
-            Toast.makeText(this,getString(R.string.editor_insert_pet_successful),Toast.LENGTH_SHORT).show();
+            int rowsAffected = getContentResolver().update(mCurrentPetUri,values,null,null);
+
+            if(rowsAffected==0){
+                Toast.makeText(this,getString(R.string.editor_update_pet_failed),
+                        Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this,getString(R.string.editor_update_pet_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
+
     }
 
     @Override
@@ -125,7 +139,7 @@ public class EditorActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_save:
-                insertPet();
+                savePet();
                 finish();
                 return true;
             case R.id.action_delete:
