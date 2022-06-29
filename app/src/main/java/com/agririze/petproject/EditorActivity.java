@@ -179,6 +179,7 @@ public class EditorActivity extends AppCompatActivity implements
                 finish();
                 return true;
             case R.id.action_delete:
+                showDeleteConfirmationDialog();
                 return true;
             case android.R.id.home:
                 if(!mPetHasChanged){
@@ -295,5 +296,42 @@ public class EditorActivity extends AppCompatActivity implements
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void showDeleteConfirmationDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deletePet();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(dialog!=null){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void deletePet(){
+        if(mCurrentPetUri != null){
+            int rowsDeleted = getContentResolver().delete(mCurrentPetUri,null,null);
+            if(rowsDeleted == 0){
+                Toast.makeText(this,getString(R.string.editor_delete_pet_failed),
+                        Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this,getString(R.string.editor_delete_pet_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+        finish();
     }
 }
