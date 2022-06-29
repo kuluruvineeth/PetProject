@@ -63,6 +63,7 @@ public class EditorActivity extends AppCompatActivity implements
 
         if(mCurrentPetUri == null){
             setTitle(getString(R.string.editor_activity_title_new_pet));
+            invalidateOptionsMenu();
         }else{
             setTitle(getString(R.string.editor_activity_title_edit_pet));
 
@@ -157,6 +158,16 @@ public class EditorActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_editor,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(mCurrentPetUri == null){
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
         return true;
     }
 
