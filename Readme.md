@@ -4,7 +4,7 @@
 - ContentProvider
 - ContentResolver
 - CursorLoader
-- ListView + Adapter
+- ListView + CursorAdapter
 - SQLiteDatabase
 - AlertDialog
 
